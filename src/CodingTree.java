@@ -153,27 +153,26 @@ public class CodingTree {
 	public String getBits() {
 		return bits.toString();
 	}
-									  /*Find a way to sort the map by value*/
-	public String decode(String bits, Map<Character, String> codes) {	
+	
+	public String decode(String bits, Map<Character, String> codes) {
 		StringBuilder decodedMessage = new StringBuilder();
-		String encodedMessage = bits;
+		Map<String, Character> codesReversed = new HashMap<String, Character>();
 		
-		while (encodedMessage.length() != 0) {
-			
-			for (Character c : codes.keySet()) {
-				
-				String charCode = codes.get(c);
-				String subEncoded = null;
-				
-				if (charCode.length() <= encodedMessage.length()) {
-					subEncoded = encodedMessage.substring(0, charCode.length());
-				}
-				
-				if (codes.containsValue(subEncoded) && charCode.equals(subEncoded)) {
-					decodedMessage.append(c);
-					encodedMessage = encodedMessage.substring(charCode.length(), encodedMessage.length());
-				}
-				
+		//reverse map so we can parse the bits with codes as our keys
+		for (Character c : codes.keySet()) {
+			String code = codes.get(c);
+			codesReversed.put(code, c);
+		}
+		
+		StringBuilder subEncoded = new StringBuilder();
+		Character charTemp;
+		
+		for (int i = 0; i < bits.length(); i++) {
+			subEncoded.append(bits.charAt(i));
+			charTemp = codesReversed.get(subEncoded.toString());
+			if (charTemp != null) {
+				decodedMessage.append(charTemp);
+				subEncoded.setLength(0);	//clears the bits
 			}
 		}
 		
